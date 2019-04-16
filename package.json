@@ -1,0 +1,19 @@
+{
+  "name": "zuzu",
+  "version": "0.0.1-beta.0",
+  "description": "",
+  "bin": "zuzu",
+  "scripts": {
+    "prepublish": "go build",
+    "test": "go test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gndplayground/zuzu.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gndplayground/zuzu/issues"
+  }
+}
