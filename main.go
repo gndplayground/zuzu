@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"path/filepath"
 	"time"
 )
 
@@ -35,6 +34,12 @@ func isInNodeModules(current string) bool {
 	return false
 }
 
+func currentExecutablePath() (string, error)  {
+	ex, err := os.Executable()
+	if err != nil { return "", err}
+	return path.Dir(ex), nil
+}
+
 func main() {
 
 	var err error = nil
@@ -59,7 +64,7 @@ func main() {
 
 	var templatePath = path.Join(flags.templatePath, flags.childTemplate)
 
-	currentPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	currentPath, err := currentExecutablePath()
 
 	if err != nil {
 		log.Fatal(err)
