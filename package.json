@@ -5,7 +5,7 @@
   "bin": "zuzu",
   "scripts": {
     "prepublish": "go build",
-    "test": "go test"
+    "test": "go test ./test -v"
   },
   "repository": {
     "type": "git",
