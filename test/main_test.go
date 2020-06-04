@@ -28,7 +28,7 @@ const indexTsx = `export {default} from './Acb'`
 
 const aCBTsx = `acbAcbACB`
 
-func fatalErr(err error)  {
+func fatalErr(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,7 +40,7 @@ func checkGeneratedFiles(list []string) (file string, result bool) {
 	fatalErr(err)
 
 	if string(input) != acbTsx {
-		return list[0] , false
+		return list[0], false
 	}
 
 	input, err = ioutil.ReadFile(list[1])
@@ -57,7 +57,7 @@ func checkGeneratedFiles(list []string) (file string, result bool) {
 
 	fatalErr(err)
 
-	return "" ,true
+	return "", true
 }
 
 func TestZuZu(t *testing.T) {
@@ -85,7 +85,7 @@ func TestZuZu(t *testing.T) {
 
 		var files []string
 
-		walks  := []string{"acb", "acb/acb.tsx", "acb/index.tsx", "acb/m", "acb/m/ACB.tsx"}
+		walks := []string{"acb", "acb/acb.tsx", "acb/index.tsx", "acb/m", "acb/m/ACB.tsx"}
 
 		err = filepath.Walk("acb", func(path string, info os.FileInfo, err error) error {
 			files = append(files, path)
@@ -97,8 +97,8 @@ func TestZuZu(t *testing.T) {
 		sort.Strings(walks)
 
 		sort.Strings(files)
-
-		if !reflect.DeepEqual(walks,files) {
+		fmt.Println(walks, files)
+		if !reflect.DeepEqual(walks, files) {
 			t.Errorf("Should create correct files")
 		}
 
@@ -149,7 +149,7 @@ func TestZuZu(t *testing.T) {
 		input, err := ioutil.ReadFile("acb/ACB.tsx")
 
 		if string(input) != aCBTsx {
-			t.Errorf("Content generated mismatch in file %s","acb/ACB.tsx")
+			t.Errorf("Content generated mismatch in file %s", "acb/ACB.tsx")
 		}
 
 		err = os.RemoveAll("acb")
@@ -169,7 +169,7 @@ func TestZuZu(t *testing.T) {
 		input, err := ioutil.ReadFile("acb/acb.tsx")
 
 		if string(input) != "Acb" {
-			t.Errorf("Content generated mismatch in file %s","acb/acb.tsx")
+			t.Errorf("Content generated mismatch in file %s", "acb/acb.tsx")
 		}
 
 		err = os.RemoveAll("acb")
@@ -188,7 +188,7 @@ func TestZuZu(t *testing.T) {
 
 		var files []string
 
-		walks  := []string{"acb", "acb/acb.tsx", "acb/index.tsx", "acb/m", "acb/m/ACB.tsx"}
+		walks := []string{"acb", "acb/acb.tsx", "acb/index.tsx", "acb/m", "acb/m/ACB.tsx"}
 
 		err = filepath.Walk("acb", func(path string, info os.FileInfo, err error) error {
 			files = append(files, path)
@@ -201,7 +201,7 @@ func TestZuZu(t *testing.T) {
 
 		sort.Strings(files)
 
-		if !reflect.DeepEqual(walks,files) {
+		if !reflect.DeepEqual(walks, files) {
 			t.Errorf("Should create correct files")
 		}
 
@@ -210,6 +210,32 @@ func TestZuZu(t *testing.T) {
 		}
 
 		err = os.RemoveAll("acb")
+
+		fatalErr(err)
+	})
+
+	t.Run("Should create template with correct string case", func(t *testing.T) {
+		cmd := exec.Command("node_modules/.bin/zuzu", "-base-template=template3", "-t=stringcase", "ContentCase")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		err := cmd.Run()
+
+		fatalErr(err)
+
+		input, err := ioutil.ReadFile("ContentCase/camel.txt")
+
+		if string(input) != "contentCaseContentCase" {
+			t.Errorf("Content generated mismatch in file %s", "ContentCase/camel.txt")
+		}
+
+		input, err = ioutil.ReadFile("ContentCase/kebab.txt")
+
+		if string(input) != "content-caseCONTENT-CASE" {
+			t.Errorf("Content generated mismatch in file %s", "ContentCase/kebab.txt")
+		}
+
+		err = os.RemoveAll("ContentCase")
 
 		fatalErr(err)
 	})

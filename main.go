@@ -34,9 +34,11 @@ func isInNodeModules(current string) bool {
 	return false
 }
 
-func currentExecutablePath() (string, error)  {
+func currentExecutablePath() (string, error) {
 	ex, err := os.Executable()
-	if err != nil { return "", err}
+	if err != nil {
+		return "", err
+	}
 	return path.Dir(ex), nil
 }
 
@@ -121,7 +123,7 @@ func main() {
 
 	}
 
-	fmt.Println(aurora.Cyan("Finish"), aurora.Green(fmt.Sprintf("%fms", float64(time.Since(start)) / float64(time.Millisecond))))
+	fmt.Println(aurora.Cyan("Finish"), aurora.Green(fmt.Sprintf("%fms", float64(time.Since(start))/float64(time.Millisecond))))
 
 	if err != nil {
 		log.Fatal(aurora.Red(err))

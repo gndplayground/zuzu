@@ -15,7 +15,6 @@ func EnsureDir(fileName string) (err error) {
 	return err
 }
 
-
 func CreateFile(path, content string) (result CreateFileResult) {
 
 	result.path = path

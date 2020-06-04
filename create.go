@@ -7,10 +7,16 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+
+	strcase "github.com/iancoleman/strcase"
 )
 
-func replaceContentCases(content string, name string) (result string)  {
+func replaceContentCases(content string, name string) (result string) {
 	result = strings.ReplaceAll(content, "{{name}}", name)
+	result = strings.ReplaceAll(result, "{{nameCamel}}", strcase.ToLowerCamel(name))
+	result = strings.ReplaceAll(result, "{{NameCamel}}", strcase.ToCamel(name))
+	result = strings.ReplaceAll(result, "{{nameKebab}}", strcase.ToKebab(name))
+	result = strings.ReplaceAll(result, "{{NameKebab}}", strcase.ToScreamingKebab(name))
 	result = strings.ReplaceAll(result, "{{Name}}", strings.Title(name))
 	result = strings.ReplaceAll(result, "{{NAME}}", strings.ToUpper(name))
 	return result
@@ -41,7 +47,6 @@ func CreateFiles(config CreateFileConfig) (results []CreateFileResult) {
 			}
 
 			content := string(input)
-
 			results = append(
 				results, CreateFile(
 					replaceContentCases(strings.Replace(file, config.baseTemplatePath, config.basePath, 1), config.name),
