@@ -35,7 +35,7 @@ function getBinaryDir() {
 
 function getBinaryPath() {
   const config = getConfig();
-  return join(config.dir, config.name);
+  return join(config.dir, `${config.name}-${config.platform}`);
 }
 
 module.exports = {

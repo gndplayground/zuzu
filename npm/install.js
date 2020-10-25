@@ -7,11 +7,11 @@ const rimraf = require("rimraf");
 
 const { existsSync } = require("fs");
 
-const { getConfig, getBinaryPath } = require("./getBinary");
+const { getConfig, getBinaryDir } = require("./getBinary");
 
 const config = getConfig();
 
-const binaryDirectory = getBinaryPath();
+const binaryDirectory = getBinaryDir();
 
 if (existsSync(binaryDirectory)) {
   rimraf.sync(binaryDirectory);
