@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/logrusorgru/aurora"
 	"log"
 	"os"
 	"path"
 	"time"
+
+	"github.com/logrusorgru/aurora"
 )
 
 type CreateFileResult struct {
@@ -23,6 +24,7 @@ type CreateFileConfig struct {
 
 type Flags struct {
 	noDir         bool
+	dir           string
 	templatePath  string
 	childTemplate string
 }
@@ -50,48 +52,40 @@ func main() {
 
 	args := os.Args[1:]
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	flag.BoolVar(&flags.noDir, "no-dir", false, "no create directory")
 
-	flag.StringVar(&flags.templatePath, "base-template", "", "manually set template path")
+	flag.StringVar(&flags.dir, "dir", "", "create template in path")
+
+	flag.StringVar(&flags.templatePath, "base-template", path.Join("template"), "manually set template path location")
 
 	flag.StringVar(&flags.childTemplate, "t", "", "set child template dir")
 
 	flag.Parse()
 
-	dir, err := os.Getwd()
+	basePath, err := os.Getwd()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	dir := path.Join(basePath, flags.dir)
 
 	var templatePath = path.Join(flags.templatePath, flags.childTemplate)
-
-	currentPath, err := currentExecutablePath()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if isInNodeModules(currentPath) && flags.templatePath == "" {
-		templatePath = path.Join(fmt.Sprintf("%s%s", currentPath[:len(currentPath)-17], "template"), flags.childTemplate)
-	}
-
-	if templatePath == "" {
-		templatePath = "template"
-	}
 
 	if len(os.Args) <= 1 {
 		log.Fatal(aurora.Red("Require dir name..."))
 	}
-
-	basePath := dir
 
 	start := time.Now()
 
 	for _, arg := range args {
 		if arg[:1] != "-" {
 			if !flags.noDir {
-				err = CreateDir(path.Join(arg))
+				err = CreateDir(path.Join(dir, arg))
 				if err != nil {
 					break
 				}

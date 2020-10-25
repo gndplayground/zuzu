@@ -62,7 +62,7 @@ func checkGeneratedFiles(list []string) (file string, result bool) {
 
 func TestZuZu(t *testing.T) {
 	t.Run("Should return error 'Require dir name...'", func(t *testing.T) {
-		cmd := exec.Command("./zuzu")
+		cmd := exec.Command("./bin/zuzu")
 		var outb, errb bytes.Buffer
 		cmd.Stdout = &outb
 		cmd.Stderr = &errb
@@ -74,8 +74,8 @@ func TestZuZu(t *testing.T) {
 		}
 	})
 
-	t.Run("Should create template when stand on .bin node", func(t *testing.T) {
-		cmd := exec.Command("node_modules/.bin/zuzu", "acb")
+	t.Run("Should create default template", func(t *testing.T) {
+		cmd := exec.Command("./bin/zuzu", "acb")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
@@ -97,7 +97,7 @@ func TestZuZu(t *testing.T) {
 		sort.Strings(walks)
 
 		sort.Strings(files)
-		fmt.Println(walks, files)
+
 		if !reflect.DeepEqual(walks, files) {
 			t.Errorf("Should create correct files")
 		}
@@ -111,8 +111,8 @@ func TestZuZu(t *testing.T) {
 		fatalErr(err)
 	})
 
-	t.Run("Should create template when stand on .bin node with no dir", func(t *testing.T) {
-		cmd := exec.Command("node_modules/.bin/zuzu", "-no-dir", "acb")
+	t.Run("Should create template with no dir", func(t *testing.T) {
+		cmd := exec.Command("./bin/zuzu", "-no-dir", "acb")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
@@ -137,8 +137,8 @@ func TestZuZu(t *testing.T) {
 		fatalErr(err)
 	})
 
-	t.Run("Should create template when stand on .bin node with specific template", func(t *testing.T) {
-		cmd := exec.Command("node_modules/.bin/zuzu", "-t=m", "acb")
+	t.Run("Should create template with specific template", func(t *testing.T) {
+		cmd := exec.Command("./bin/zuzu", "-t=m", "acb")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
@@ -157,8 +157,8 @@ func TestZuZu(t *testing.T) {
 		fatalErr(err)
 	})
 
-	t.Run("Should create template when stand on .bin node with custom base template", func(t *testing.T) {
-		cmd := exec.Command("node_modules/.bin/zuzu", "-base-template=template2", "acb")
+	t.Run("Should create template with custom base template", func(t *testing.T) {
+		cmd := exec.Command("./bin/zuzu", "-base-template=template2", "acb")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
@@ -177,45 +177,8 @@ func TestZuZu(t *testing.T) {
 		fatalErr(err)
 	})
 
-	t.Run("Should work when call exec directly", func(t *testing.T) {
-		cmd := exec.Command("./zuzu", "acb")
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-
-		err := cmd.Run()
-
-		fatalErr(err)
-
-		var files []string
-
-		walks := []string{"acb", "acb/acb.tsx", "acb/index.tsx", "acb/m", "acb/m/ACB.tsx"}
-
-		err = filepath.Walk("acb", func(path string, info os.FileInfo, err error) error {
-			files = append(files, path)
-			return nil
-		})
-
-		fatalErr(err)
-
-		sort.Strings(walks)
-
-		sort.Strings(files)
-
-		if !reflect.DeepEqual(walks, files) {
-			t.Errorf("Should create correct files")
-		}
-
-		if fileErr, result := checkGeneratedFiles([]string{"acb/acb.tsx", "acb/index.tsx", "acb/m/ACB.tsx"}); !result {
-			t.Errorf("Content generated mismatch in file %s", fileErr)
-		}
-
-		err = os.RemoveAll("acb")
-
-		fatalErr(err)
-	})
-
 	t.Run("Should create template with correct string case", func(t *testing.T) {
-		cmd := exec.Command("node_modules/.bin/zuzu", "-base-template=template3", "-t=stringcase", "ContentCase")
+		cmd := exec.Command("./bin/zuzu", "-base-template=template3", "-t=stringcase", "ContentCase")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
@@ -236,6 +199,43 @@ func TestZuZu(t *testing.T) {
 		}
 
 		err = os.RemoveAll("ContentCase")
+
+		fatalErr(err)
+	})
+
+	t.Run("Should create template with custom dir", func(t *testing.T) {
+		cmd := exec.Command("./bin/zuzu", "-dir=dir/dir1", "acb")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		err := cmd.Run()
+
+		fatalErr(err)
+
+		var files []string
+
+		walks := []string{"dir", "dir/dir1", "dir/dir1/acb", "dir/dir1/acb/acb.tsx", "dir/dir1/acb/index.tsx", "dir/dir1/acb/m", "dir/dir1/acb/m/ACB.tsx"}
+
+		err = filepath.Walk("dir", func(path string, info os.FileInfo, err error) error {
+			files = append(files, path)
+			return nil
+		})
+
+		fatalErr(err)
+
+		sort.Strings(walks)
+
+		sort.Strings(files)
+
+		if !reflect.DeepEqual(walks, files) {
+			t.Errorf("Should create correct files")
+		}
+
+		if fileErr, result := checkGeneratedFiles([]string{"dir/dir1/acb/acb.tsx", "dir/dir1/acb/index.tsx", "dir/dir1/acb/m/ACB.tsx"}); !result {
+			t.Errorf("Content generated mismatch in file %s", fileErr)
+		}
+
+		err = os.RemoveAll("dir")
 
 		fatalErr(err)
 	})

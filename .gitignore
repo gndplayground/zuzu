@@ -3,3 +3,7 @@ zuzu
 
 .idea
 .DS_Store
+bin
+build
+template
+node_modules
