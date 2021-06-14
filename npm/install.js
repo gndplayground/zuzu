@@ -40,5 +40,5 @@ return axios({
   })
   .catch((e) => {
     console.error("Error fetching release", e.message);
-    throw e;
+    throw e.message;
   });

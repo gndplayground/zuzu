@@ -18,6 +18,7 @@ const buildVersions = [
   { os: "darwin", arch: "amd64", name: "mac" },
   { os: "linux", arch: "amd64", name: "linux" },
   { os: "windows", arch: "386", name: "window" },
+  { os: "darwin", arch: "arm64", name: "mac-silicon" },
 ];
 
 // Might need to use worker if the build is long
